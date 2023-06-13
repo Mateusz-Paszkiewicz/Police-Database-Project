@@ -38,34 +38,33 @@ def index():
 @authorisation_2_required
 def osoby():
     if request.method == "POST":
-        osoba = {}
-        osoba["imie"] = request.form.get("imie")
-        osoba["nazwisko"] = request.form.get("nazwisko")
-        osoba["przezwisko"] = request.form.get("przezwisko")
-        osoba["wiek"] = request.form.get("wiek")
-        osoba["wyglad"] = request.form.get("wyglad")
-        osoba["wzrost"] = request.form.get("wzrost")
-        osoba["znaki"] = request.form.get("znaki")
-        osoba["inne"] = request.form.get("inne")
+        osoba = {
+            "imie": request.form.get("imie"),
+            "nazwisko": request.form.get("nazwisko"),
+            "przezwisko": request.form.get("przezwisko"),
+            "wiek": request.form.get("wiek"),
+            "wyglad": request.form.get("wyglad"),
+            "wzrost": request.form.get("wzrost"),
+            "znaki": request.form.get("znaki"),
+            "inne": request.form.get("inne")
+        }
 
-        arguments = ""
+        arguments = []
+        values = {}
         for key, dana in osoba.items():
             if dana:
-                if key == "wiek" or key == "wzrost":
-                    arguments = arguments + key + "=" + dana + " AND "
-                else:
-                    arguments = arguments + key + "='" + dana + "' AND "
-        arguments = arguments.rstrip(" AND ")
-
-        osoby = []
+                arguments.append(key + "=%(" + key + ")s")
+                values[key] = dana
+        
         query = "SELECT * FROM osoba"
-        if len(arguments) >= 1:
-            query += " WHERE " + arguments
-        db.execute(query)
+        if arguments:
+            query += " WHERE " + " AND ".join(arguments)
+        
+        db.execute(query, values)
         osoby = db.fetchall()
 
         return render_template("osoby.html", osoby=osoby)
-
+    
     else:
         db.execute("SELECT * FROM osoba")
         osoby = db.fetchall()
