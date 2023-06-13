@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Home Page
+{% endblock %}
+
+{% block main %}
+<div class="container">
+    <h1>Welcome to the Police Database</h1>
+    <p>This is the homepage of the police database website.</p>
+    <p>Here you can find the latest news and updates related to the police department.</p>
+    {% if wrong == 1 %}
+    <div class="error-message">Insufficient authorization level</div>
+    {% endif %}
+</div>
+{% endblock %}

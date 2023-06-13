@@ -1,0 +1,60 @@
+﻿################################################################################
+# Ten plik .gitignore został utworzony automatycznie przez Microsoft(R) Visual Studio.
+################################################################################
+
+ActionList.txt
+dump.sql
+sqltest.sql
+
+# Python specific
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Environment
+.env
+.venv/
+env/
+
+# Dependencies
+lib/
+bin/
+include/
+lib64/
+Scripts/
+
+# IDE/Editor specific
+.vs/
+.vscode/
+.idea/
+flask_session/
+*.sublime-project
+*.sublime-workspace
+
+# Compiled files
+*.pyc
+*.pyo
+*.pyd
+*.pyw
+*.pyz
+*.pywz
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Logs
+*.log
+
+# Database
+*.db
+
+# Configuration files
+*.conf
+*.cfg
+*.ini
+
+# Other
+*.swp
+.DS_Store

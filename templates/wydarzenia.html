@@ -1,0 +1,100 @@
+﻿{% extends "layout.html" %}
+
+{% block title %}
+    Wydarzenia
+{% endblock %}
+
+{% block main %}
+
+<div class="form-container" style="margin-left: 17%; margin-right: 17%; margin-bottom: 2%">
+    <form action="/wydarzenia" method="post">
+        <div class="row">
+            <div class="col">
+                <div class="mb-3">
+                    <label for="data">Data i godzina:</label>
+                    <input autocomplete="off" class="form-control mx-auto w-auto" id="data" name="data" placeholder="Data" type="datetime-local"
+                    oninvalid="setCustomValidity('Niepoprawniy format.')">
+                </div>
+            </div>
+            <div class="col">
+                <div class="mb-3">
+                    <label for="rodzaj">Rodzaj:</label>
+                    <input autocomplete="off" class="form-control mx-auto w-auto" id="rodzaj" name="rodzaj" placeholder="Rodzaj" type="text">
+                </div>
+            </div>
+            <div class="col">
+                <div class="mb-3">
+                    <label for="region">Region:</label>
+                    <input autocomplete="off" class="form-control mx-auto w-auto" id="region" name="region" placeholder="Region" type="text">
+                </div>
+            </div>
+            <div class="col">
+                <div class="mb-3">
+                    <label for="miasto">Miasto:</label>
+                    <input autocomplete="off" class="form-control mx-auto w-auto" id="miasto" name="miasto" placeholder="Miasto" type="text">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="mb-3">
+                    <label for="ulica">Ulica:</label>
+                    <input autocomplete="off" class="form-control mx-auto w-auto" id="ulica" name="ulica" placeholder="Ulica" type="text">
+                </div>
+            </div>
+            <div class="col">
+                <div class="mb-3">
+                    <label for="numer">Numer:</label>
+                    <input autocomplete="off" class="form-control mx-auto w-auto" id="numer" name="numer" placeholder="Numer" type="text">
+                </div>
+            </div>
+            <div class="col">
+                <div class="mb-3">
+                    <label for="mieszkanie">Mieszkanie:</label>
+                    <input autocomplete="off" class="form-control mx-auto w-auto" id="mieszkanie" name="mieszkanie" placeholder="Mieszkanie" type="text">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <button class="btn btn-primary" style="background-color: #1b244f; color: #ffffff" type="submit">Wyszukaj</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th style="width: 33%">Data i godzina</th>
+            <th style="width: 33%">Rodzaj</th>
+            <th style="width: 33%">Region</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Loop through the database entries to display them in this table -->
+        {% for wydarzenie in wydarzenia %}
+        <tr>
+            <td>
+                {{ wydarzenie[0] }}
+            </td>
+            <td>
+                {{ wydarzenie[1] }}
+            </td>
+            <td>
+                {{ wydarzenie[2] }}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% if session["authorisation"] > 2 %}
+<div>
+    <div style="float: right; padding-right: 5vw;">
+        <a class="nav-link" href="/wydarzenia_add">Dodaj zdarzenie</a>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}

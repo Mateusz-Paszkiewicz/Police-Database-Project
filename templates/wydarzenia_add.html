@@ -1,0 +1,48 @@
+﻿{% extends "layout.html" %}
+
+{% block title %}
+    Wydarzenia
+{% endblock %}
+
+{% block main %}
+
+<form action="/wydarzenia_add" method="post">
+    <div class="mb-3">
+        <label for="data">Data i godzina:</label>
+        <input autocomplete="off" class="form-control mx-auto w-auto" id="data" name="data" placeholder="Data" type="datetime-local"
+        oninvalid="setCustomValidity('Niepoprawny format.')">
+    </div>
+    <div class="mb-3">
+        <label for="rodzaj">Rodzaj:</label>
+        <input autocomplete="off" class="form-control mx-auto w-auto" id="rodzaj" name="rodzaj" placeholder="Rodzaj" type="text">
+    </div>
+    <div class="mb-3">
+        <label for="region">Region:</label>
+        <input autocomplete="off" class="form-control mx-auto w-auto" id="region" name="region" placeholder="Region" type="text">
+    </div>
+    <div class="mb-3">
+        <label for="miasto">Miasto:</label>
+        <input autocomplete="off" class="form-control mx-auto w-auto" id="miasto" name="miasto" placeholder="Miasto" type="text">
+    </div>
+    <div class="mb-3">
+        <label for="ulica">Ulica:</label>
+        <input autocomplete="off" class="form-control mx-auto w-auto" id="ulica" name="ulica" placeholder="Ulica" type="text">
+    </div>
+    <div class="mb-3">
+        <label for="numer">Numer:</label>
+        <input autocomplete="off" class="form-control mx-auto w-auto" id="numer" name="numer" placeholder="Numer" type="text">
+    </div>
+    <div class="mb-3">
+        <label for="mieszkanie">Mieszkanie:</label>
+        <input autocomplete="off" class="form-control mx-auto w-auto" id="mieszkanie" name="mieszkanie" placeholder="Mieszkanie" type="text">
+    </div>
+    <div class="col">
+        <button class="btn btn-primary" style="background-color: #1b244f; color: #ffffff" type="submit">Dodaj</button>
+    </div>
+</form>
+
+{% if success == 1 %}
+<div style="color: lawngreen;">Wydarzenie dodane</div>
+{% endif %}
+
+{% endblock %}

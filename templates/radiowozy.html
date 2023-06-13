@@ -1,0 +1,83 @@
+﻿{% extends "layout.html" %}
+
+{% block title %}
+    Radiowozy
+{% endblock %}
+
+{% block main %}
+
+<div class="form-container" style="margin-left: 17%; margin-right: 17%; margin-bottom: 2%">
+    <form action="/radiowozy" method="post">
+        <div class="row">
+             <div class="col">
+                <div class="mb-3">
+                    <label for="model">Model:</label>
+                    <input autocomplete="off" class="form-control mx-auto w-auto" id="model" name="model" placeholder="model" type="text">
+                </div>
+            </div>
+            <div class="col">
+                <div class="mb-3">
+                    <label for="dostepnosc">Dostępność:</label>
+                    <input autocomplete="off" class="form-control mx-auto w-auto" id="dostepnosc" name="dostepnosc" placeholder="Dostępność" type="text">
+                </div>
+            </div>
+            <div class="col">
+                <div class="mb-3">
+                    <label for="moc">Moc:</label>
+                    <input autocomplete="off" class="form-control mx-auto w-auto" id="moc" name="moc" placeholder="Moc" type="text">
+                </div>
+            </div>
+            <div class="col">
+                <div class="mb-3">
+                    <label for="kolor">Kolor:</label>
+                    <input autocomplete="off" class="form-control mx-auto w-auto" id="kolor" name="kolor" placeholder="Kolor" type="text">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <button class="btn btn-primary" style="background-color: #1b244f; color: #ffffff" type="submit">Wyszukaj</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th style="width: 20%">Tablica rejestracyjna</th>
+            <th style="width: 20%">Model</th>
+            <th style="width: 20%">Dostępność</th>
+            <th style="width: 20%">Moc</th>
+            <th style="width: 20%">Zdjęcie</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Loop through the database entries to display them in this table -->
+        {% for radiowoz in radiowozy %}
+        <tr>
+            <td>
+                {{ radiowoz[0] }}
+            </td>
+            <td>
+                {{ radiowoz[4] }}
+            </td>
+            <td>
+                {{ radiowoz[1] }}
+            </td>
+            <td>
+                {{ radiowoz[2] }}
+            </td>
+            <td>
+                {% if radiowoz[5] %}
+                    <img src="{{ url_for('static', filename='resources/' + radiowoz[5]) }}" style="width: 200px; height: auto;" alt="car image">
+                {% else %}
+                    Brak
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

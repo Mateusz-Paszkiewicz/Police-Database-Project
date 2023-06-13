@@ -1,0 +1,105 @@
+﻿{% extends "layout.html" %}
+
+{% block title %}
+    Osoby
+{% endblock %}
+
+{% block main %}
+
+<div class="form-container" style="margin-left: 17%; margin-right: 17%; margin-bottom: 2%">
+    <form action="/osoby" method="post">
+        <div class="row">
+            <div class="col">
+                <div class="mb-3">
+                    <label for="imie">Imie:</label>
+                    <input autocomplete="off" class="form-control mx-auto w-auto" id="imie" name="imie" placeholder="Imie" type="text">
+                </div>
+            </div>
+            <div class="col">
+                <div class="mb-3">
+                    <label for="nazwisko">Nazwisko:</label>
+                    <input autocomplete="off" class="form-control mx-auto w-auto" id="nazwisko" name="nazwisko" placeholder="Nazwisko" type="text">
+                </div>
+            </div>
+            <div class="col">
+                <div class="mb-3">
+                    <label for="przezwisko">Przezwisko:</label>
+                    <input autocomplete="off" class="form-control mx-auto w-auto" id="przezwisko" name="przezwisko" placeholder="Przezwisko" type="text">
+                </div>
+            </div>
+            <div class="col">
+                <div class="mb-3">
+                    <label for="wiek">Wiek:</label>
+                    <input autocomplete="off" class="form-control mx-auto w-auto" id="wiek" name="wiek" placeholder="Wiek" type="text">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="mb-3">
+                    <label for="wzrost">Wzrost:</label>
+                    <input autocomplete="off" class="form-control mx-auto w-auto" id="wzrost" name="wzrost" placeholder="Wzrost" type="text">
+                </div>
+            </div>
+            <div class="col">
+                <div class="mb-3">
+                    <label for="wygląd">Wygląd:</label>
+                    <input autocomplete="off" class="form-control mx-auto w-auto" id="wygląd" name="wygląd" placeholder="Wygląd" type="text">
+                </div>
+            </div>
+            <div class="col">
+                <div class="mb-3">
+                    <label for="znaki">Znaki:</label>
+                    <input autocomplete="off" class="form-control mx-auto w-auto" id="znaki" name="znaki" placeholder="Znaki" type="text">
+                </div>
+            </div>
+            <div class="col">
+                <div class="mb-3">
+                    <label for="inne">Inne:</label>
+                    <input autocomplete="off" class="form-control mx-auto w-auto" id="inne" name="inne" placeholder="Inne" type="text">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <button class="btn btn-primary" style="background-color: #1b244f; color: #ffffff" type="submit">Wyszukaj</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th style="width: 33%">Imię</th>
+            <th style="width: 33%">Nazwisko</th>
+            <th style="width: 33%">Przezwisko</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Loop through the database entries to display them in this table -->
+        {% for osoba in osoby %}
+        <tr>
+            <td>
+                {{ osoba[3] }}
+            </td>
+            <td>
+                {{ osoba[4] }}
+            </td>
+            <td>
+                {{ osoba[6] }}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% if session["authorisation"] > 2 %}
+<div>
+    <div style="float: right; padding-right: 5vw;">
+        <a class="nav-link" href="/osoby_add">Dodaj osobe</a>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}

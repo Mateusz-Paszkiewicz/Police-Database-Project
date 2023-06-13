@@ -1,0 +1,17 @@
+Założenia funkcjonalne:
+
+- Zarządzanie danymi, przechowywanie, dodawanie, usuwanie, edytowanie informacji o osobach i zdarzeniach dostępnych w systemie
+- Raportowanie, zapis do lub wypis z bazy osób i zdarzeń dostępnych w systemie
+- Administracja wypożyczalnią, informowanie o dostępności i niedostępności pojazdów floty, możliwość ich wypożyczania na określony czas
+- Poziomy autoryzacji, 3 poziomy autoryzacji, każdy z rosnącą ilością funkcjonalności
+- Logowanie, autoryzacja użytkowników
+- Śledzenie zmian
+
+Założenia niefunkcjonalne:
+
+- Dostępność 24/7/365
+- Bezpieczeństwo danych,
+- Niezawodność, odporność na błędy
+- Wydajność, założenie jednej bazy na jedno miasto
+- Zbieranie wewnętrznych raportów z aplikacji
+- Użyteczność, prosty w obsłudze interface użytkownika GUI

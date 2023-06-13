@@ -1,0 +1,23 @@
+﻿{% extends "layout.html" %}
+
+{% block title %}
+    Zaloguj
+{% endblock %}
+
+{% block main %}
+    <form action="/login" method="post">
+        <div class="mb-3">
+            <input class="form-control mx-auto w-auto" id="login" name="login" placeholder="Login" type="text">
+        </div>
+        <div class="mb-3">
+            <input class="form-control mx-auto w-auto" id="password" name="password" placeholder="Hasło" type="password">
+        </div>
+        <button class="btn btn-primary" type="submit">Zaloguj</button>
+        {% if wrong == 1 %}
+            <div style="color: red;">Brakujący login lub hasło</div>
+        {% elif wrong == 2 %}
+            <div style="color: red;">Zły login lub hasło</div>
+        {% endif %}
+        
+    </form>
+{% endblock %}

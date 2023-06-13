@@ -1,0 +1,86 @@
+body
+{
+    background-color: #121212;
+    color: white;
+    font-family: "Courier New", Courier, monospace
+}
+
+/* Size for brand */
+nav .navbar-brand
+{
+}
+
+nav {
+    background-color: #1f2021;
+}
+
+ul {
+    vertical-align: text-top;
+    display: inline-block;
+    max-width: 45%;
+}
+
+li {
+    text-align: left;
+    padding: 2px;
+}
+
+.del {
+    display: inline;
+    float: right;
+}
+
+.del_button {
+    text-align: center;
+    color: red;
+    border: none;
+    background: none;
+}
+
+.del_button:hover {
+    color: #1c0000;
+}
+
+table {
+    margin-bottom: 1vw;
+    padding: 0.125vw;
+    width: 100%;
+}
+
+table th, table td {
+    padding: 0.75vw;
+    vertical-align: middle;
+    border: 1px solid black;
+}
+
+table th {
+    background-color: #202020;
+}
+
+tbody tr:nth-of-type(odd) {
+    background-color: #3b3b3b;
+}
+
+tbody tr:nth-of-type(even) {
+    background-color: #202020;
+}
+
+table td:empty {
+    background-color: #121212;
+    border: none
+}
+
+.link {
+    text-decoration: none;
+    font-family: "Courier New", Courier, monospace;
+    color: white;
+}
+
+.link:hover {
+    mix-blend-mode: multiply;
+}
+
+.btn .btn-primary {
+    color: #93a8cc;
+    background-color: #93a8cc;
+}
