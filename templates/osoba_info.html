@@ -1,0 +1,78 @@
+﻿{% extends "layout.html" %}
+
+{% block title %}
+
+        {{ osoba[3] }} {{ osoba[4] }}
+
+{% endblock %}
+
+{% block main %}
+
+<table>
+    <tr>
+        <td style="width: 20%">
+            Imie:
+        </td>
+        <td style="width: 80%">
+            {{ osoba[3] }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Nazwisko:
+        </td>
+        <td>
+            {{ osoba[4] }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Przezwisko:
+        </td>
+        <td>
+            {{ osoba[6] }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Wiek:
+        </td>
+        <td>
+            {{ osoba[5] }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Wzrost:
+        </td>
+        <td>
+            {{ osoba[7] }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Wygląd:
+        </td>
+        <td>
+            {{ osoba[2] }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Znaki:
+        </td>
+        <td>
+            {{ osoba[1] }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Inne:
+        </td>
+        <td>
+            {{ osoba[8] }}
+        </td>
+    </tr>
+</table>
+
+{% endblock %}

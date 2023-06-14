@@ -71,9 +71,10 @@
 <table>
     <thead>
         <tr>
-            <th style="width: 33%">Imię</th>
-            <th style="width: 33%">Nazwisko</th>
-            <th style="width: 33%">Przezwisko</th>
+            <th style="width: 30%">Imię</th>
+            <th style="width: 30%">Nazwisko</th>
+            <th style="width: 30%">Przezwisko</th>
+            <th style="width: 10%">Detale</th>
         </tr>
     </thead>
     <tbody>
@@ -88,6 +89,9 @@
             </td>
             <td>
                 {{ osoba[6] }}
+            </td>
+            <td>
+                <a class="nav-link" href="/osoba_info?id={{ osoba[0] }}">Więcej</a>
             </td>
         </tr>
         {% endfor %}

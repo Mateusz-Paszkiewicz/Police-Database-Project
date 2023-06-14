@@ -66,9 +66,10 @@
 <table>
     <thead>
         <tr>
-            <th style="width: 33%">Data i godzina</th>
-            <th style="width: 33%">Rodzaj</th>
-            <th style="width: 33%">Region</th>
+            <th style="width: 30%">Data i godzina</th>
+            <th style="width: 30%">Rodzaj</th>
+            <th style="width: 30%">Region</th>
+            <th style="width: 10%">Detale</th>
         </tr>
     </thead>
     <tbody>
@@ -76,13 +77,16 @@
         {% for wydarzenie in wydarzenia %}
         <tr>
             <td>
-                {{ wydarzenie[0] }}
-            </td>
-            <td>
                 {{ wydarzenie[1] }}
             </td>
             <td>
                 {{ wydarzenie[2] }}
+            </td>
+            <td>
+                {{ wydarzenie[3] }}
+            </td>
+            <td>
+                <a class="nav-link" href="/wydarzenie_info?id={{ wydarzenie[0] }}">Więcej</a>
             </td>
         </tr>
         {% endfor %}

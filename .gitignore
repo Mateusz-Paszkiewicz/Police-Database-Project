@@ -2,9 +2,12 @@
 # Ten plik .gitignore został utworzony automatycznie przez Microsoft(R) Visual Studio.
 ################################################################################
 
+.gitignore.txt
 ActionList.txt
 dump.sql
 sqltest.sql
+Requirements.txt
+README.md
 
 # Python specific
 __pycache__/

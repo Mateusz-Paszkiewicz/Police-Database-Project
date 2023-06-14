@@ -72,6 +72,20 @@ def osoby():
         return render_template("osoby.html", osoby=osoby)
 
 
+@app.route("/osoba_info")
+@login_required
+@authorisation_2_required
+def osoba_info():
+    id = request.args.get("id")
+    
+    query = "SELECT * FROM osoba WHERE id=%(id)s"
+    
+    db.execute(query, {'id': id})
+    osoba = db.fetchall()[0]
+
+    return render_template("osoba_info.html", osoba=osoba)
+
+
 @app.route("/osoby_add", methods=["GET", "POST"])
 @login_required
 @authorisation_3_required
@@ -165,7 +179,7 @@ def wydarzenia():
         for wydarzenie in wydarzenia:
             db.execute("SELECT region FROM miejsce WHERE id = " + str(wydarzenie[3]))
             region = db.fetchall()[0][0]
-            zdarzenia.append([wydarzenie[1], wydarzenie[2], region])
+            zdarzenia.append([wydarzenie[0], wydarzenie[1], wydarzenie[2], region])
 
         return render_template("wydarzenia.html", wydarzenia=zdarzenia)
 
@@ -177,9 +191,57 @@ def wydarzenia():
         for wydarzenie in wydarzenia:
             db.execute("SELECT region FROM miejsce WHERE id = " + str(wydarzenie[3]))
             miejsce = db.fetchall()
-            zdarzenia.append([wydarzenie[1], wydarzenie[2], miejsce[0][0]])
+            zdarzenia.append([wydarzenie[0], wydarzenie[1], wydarzenie[2], miejsce[0][0]])
 
         return render_template("wydarzenia.html", wydarzenia=zdarzenia)
+
+
+@app.route("/wydarzenie_info")
+@login_required
+@authorisation_2_required
+def wydarzenie_info():
+    id = request.args.get("id")
+    
+    query = "SELECT * FROM baza_wydarzen WHERE id=%(id)s"
+    
+    db.execute(query, {'id': id})
+    wydarzenie = db.fetchall()[0]
+    
+    query = "SELECT * FROM funkcjonariusz WHERE id=%(id)s"
+    
+    db.execute(query, {'id': wydarzenie[4]})
+    funkcjonariusz_info = db.fetchall()[0]
+    funkcjonariusz = funkcjonariusz_info[1] + " " + funkcjonariusz_info[2]
+    
+    info = []
+    info.append(wydarzenie[1])
+    info.append(wydarzenie[2])
+    info.append(funkcjonariusz)
+    
+    query = "SELECT * FROM powiazania WHERE id_zdarzenia=%(id)s"
+    
+    db.execute(query, {'id': id})
+    osoby_id = db.fetchall()
+    
+    podejrzani = []
+    swiadkowie = []
+    for powiazana_osoba in osoby_id:
+        query = "SELECT * FROM osoba WHERE id=%(id)s"
+    
+        db.execute(query, {'id': powiazana_osoba[0]})
+        osoba = db.fetchall()[0]
+        print(osoba)
+        imie = osoba[3] + " '" + osoba[6] + "' " + osoba[4]
+        
+        if powiazana_osoba[2] == "swiadek":
+            swiadkowie.append([imie, osoba[0]])
+        else:
+            podejrzani.append([imie, osoba[0]])
+        
+    info.append(podejrzani)
+    info.append(swiadkowie)
+
+    return render_template("wydarzenie_info.html", info=info)
 
 
 @app.route("/wydarzenia_add", methods=["GET", "POST"])

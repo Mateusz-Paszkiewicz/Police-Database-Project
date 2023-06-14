@@ -1,0 +1,58 @@
+﻿{% extends "layout.html" %}
+
+{% block title %}
+
+        Wydarzenie {{ info[0] }}
+
+{% endblock %}
+
+{% block main %}
+
+<table>
+    <tr>
+        <td style="width: 20%">
+            Data i godzina:
+        </td>
+        <td style="width: 80%">
+            {{ info[0] }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Rodzaj:
+        </td>
+        <td>
+            {{ info[1] }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Funkcjonariusz:
+        </td>
+        <td>
+            {{ info[2] }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Podejrzani:
+        </td>
+        <td>
+            {% for podejrzany in info[3] %}
+                <p><a class="nav-link" href="/osoba_info?id={{ podejrzany[1] }}">{{ podejrzany[0] }}</a></p>
+            {% endfor %}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Świadkowie:
+        </td>
+        <td>
+            {% for swiadek in info[4] %}
+                <p><a class="nav-link" href="/osoba_info?id={{ swiadek[1] }}">{{ swiadek[0] }}</a></p>
+            {% endfor %}
+        </td>
+    </tr>
+</table>
+
+{% endblock %}
