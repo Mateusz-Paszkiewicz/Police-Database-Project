@@ -5,11 +5,6 @@ body
     font-family: "Courier New", Courier, monospace
 }
 
-/* Size for brand */
-nav .navbar-brand
-{
-}
-
 nav {
     background-color: #1f2021;
 }
@@ -83,4 +78,21 @@ table td:empty {
 .btn .btn-primary {
     color: #93a8cc;
     background-color: #93a8cc;
+}
+
+.form-check {
+    align-items: center;
+    padding: 0%;
+}
+  
+.checkbox-container {
+    display: flex;
+    justify-content: center;
+}
+
+.form-check-input {
+    margin-top: 0em;
+    border-color: #93a8cc;
+    width: 1.5em;
+    height: 1.5em;
 }

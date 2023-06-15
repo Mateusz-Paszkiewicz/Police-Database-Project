@@ -6,6 +6,40 @@
 
 {% block main %}
 
+<script>
+    $(function() {
+        var availableTags = [
+            {% for osoba in all %}
+                ["{{ osoba[3] }}", "{{ osoba[4] }}", "{{ osoba[6] }}"],
+            {% endfor %}
+        ];
+    
+        var uniqueImie = Array.from(new Set(availableTags.map(function(item) {
+            return item[0];
+        })));
+    
+        var uniqueNazwisko = Array.from(new Set(availableTags.map(function(item) {
+            return item[1];
+        })));
+    
+        var uniquePrzezwisko = Array.from(new Set(availableTags.map(function(item) {
+            return item[2];
+        })));
+    
+        $("#imie").autocomplete({
+            source: uniqueImie
+        });
+    
+        $("#nazwisko").autocomplete({
+            source: uniqueNazwisko
+        });
+    
+        $("#przezwisko").autocomplete({
+            source: uniquePrzezwisko
+        });
+    });
+</script>
+
 <div class="form-container" style="margin-left: 17%; margin-right: 17%; margin-bottom: 2%">
     <form action="/osoby" method="post">
         <div class="row">

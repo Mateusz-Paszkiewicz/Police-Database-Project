@@ -16,7 +16,7 @@ Session(app)
 
 cnx = mysql.connector.connect(user='funkcjonariusz', password='password123',
                               host='127.0.0.1',
-                              database='policedb')
+                              database='bazy_data')
 db = cnx.cursor()
 
 
@@ -69,17 +69,21 @@ def osoby():
         query = "SELECT * FROM osoba"
         if arguments:
             query += " WHERE " + " AND ".join(arguments)
+        query += " ORDER BY imie"
         
         db.execute(query, values)
         osoby = db.fetchall()
+        
+        db.execute("SELECT * FROM osoba ORDER BY imie")
+        all = db.fetchall()
 
-        return render_template("osoby.html", osoby=osoby)
+        return render_template("osoby.html", osoby=osoby, all=all)
     
     else:
-        db.execute("SELECT * FROM osoba")
+        db.execute("SELECT * FROM osoba ORDER BY imie")
         osoby = db.fetchall()
 
-        return render_template("osoby.html", osoby=osoby)
+        return render_template("osoby.html", osoby=osoby, all=osoby)
 
 
 @app.route("/osoba_info")
@@ -88,7 +92,7 @@ def osoby():
 def osoba_info():
     id = request.args.get("id")
     
-    query = "SELECT * FROM osoba WHERE id=%(id)s"
+    query = "SELECT * FROM osoba WHERE id=%(id)s ORDER BY imie"
     
     db.execute(query, {'id': id})
     osoba = db.fetchall()[0]
@@ -184,26 +188,36 @@ def wydarzenia():
         query = "SELECT * FROM baza_wydarzen"
         if len(arguments) >= 1:
             query += " WHERE " + arguments
+        query += " ORDER BY data_wyd"
         db.execute(query)
         wydarzenia = db.fetchall()
         for wydarzenie in wydarzenia:
             db.execute("SELECT region FROM miejsce WHERE id = " + str(wydarzenie[3]))
             region = db.fetchall()[0][0]
             zdarzenia.append([wydarzenie[0], wydarzenie[1], wydarzenie[2], region])
+            
+        db.execute("SELECT * FROM baza_wydarzen ORDER BY data_wyd")
+        wydarzenia = db.fetchall()
 
-        return render_template("wydarzenia.html", wydarzenia=zdarzenia)
+        all = []
+        for wydarzenie in wydarzenia:
+            db.execute("SELECT * FROM miejsce WHERE id = " + str(wydarzenie[3]))
+            miejsce = db.fetchall()
+            all.append([wydarzenie[0], wydarzenie[1], wydarzenie[2], miejsce[0][1], miejsce[0][2], miejsce[0][3]])
+
+        return render_template("wydarzenia.html", wydarzenia=zdarzenia, all=all)
 
     else:
-        db.execute("SELECT * FROM baza_wydarzen")
+        db.execute("SELECT * FROM baza_wydarzen ORDER BY data_wyd")
         wydarzenia = db.fetchall()
 
         zdarzenia = []
         for wydarzenie in wydarzenia:
-            db.execute("SELECT region FROM miejsce WHERE id = " + str(wydarzenie[3]))
+            db.execute("SELECT * FROM miejsce WHERE id = " + str(wydarzenie[3]))
             miejsce = db.fetchall()
-            zdarzenia.append([wydarzenie[0], wydarzenie[1], wydarzenie[2], miejsce[0][0]])
+            zdarzenia.append([wydarzenie[0], wydarzenie[1], wydarzenie[2], miejsce[0][1], miejsce[0][2], miejsce[0][3]])
 
-        return render_template("wydarzenia.html", wydarzenia=zdarzenia)
+        return render_template("wydarzenia.html", wydarzenia=zdarzenia, all=zdarzenia)
 
 
 @app.route("/wydarzenie_info")
@@ -240,7 +254,6 @@ def wydarzenie_info():
     
         db.execute(query, {'id': powiazana_osoba[0]})
         osoba = db.fetchall()[0]
-        print(osoba)
         imie = osoba[3] + " '" + osoba[6] + "' " + osoba[4]
         
         if powiazana_osoba[2] == "swiadek":
@@ -322,33 +335,16 @@ def wydarzenia_add():
 
         return render_template("wydarzenia_add.html", success=1)
     else:
-        return render_template("wydarzenia_add.html")
+        db.execute("SELECT * FROM baza_wydarzen ORDER BY data_wyd")
+        wydarzenia = db.fetchall()
 
+        all = []
+        for wydarzenie in wydarzenia:
+            db.execute("SELECT * FROM miejsce WHERE id = " + str(wydarzenie[3]))
+            miejsce = db.fetchall()
+            all.append([wydarzenie[0], wydarzenie[1], wydarzenie[2], miejsce[0][1], miejsce[0][2], miejsce[0][3]])
 
-@app.route("/radiowozy_release", methods=["GET"])
-@login_required
-def release_radiowoz():
-    rented_id = None
-
-    query = "SELECT radiowoz_id FROM funkcjonariusz WHERE id = %(cop_id)s"
-    db.execute(query, {'cop_id': session["user_id"]})
-    result = db.fetchone()
-    if result:
-        rented_id = result[0]
-
-    query = "UPDATE funkcjonariusz SET radiowoz_id = NULL WHERE id = %(cop_id)s"
-    db.execute(query, {'cop_id': session["user_id"]})
-
-    query = "UPDATE radiowoz SET dostepnosc = 0, rental_date = NULL WHERE id = %(rented_id)s"
-    db.execute(query, {'rented_id': rented_id})
-    cnx.commit()
-
-    rented_id = None
-
-    db.execute("SELECT * FROM radiowoz")
-    radiowozy = db.fetchall()
-
-    return render_template("radiowozy.html", radiowozy=radiowozy, rented_id=rented_id)
+        return render_template("wydarzenia_add.html", all=all)
 
 
 @app.route("/radiowozy", methods=["GET", "POST"])
@@ -372,7 +368,9 @@ def radiowoz():
         arguments = ""
         for key, dana in radiowoz.items():
             if dana:
-                if key == "dostepnosc" or key == "moc":
+                if key == "dostepnosc":
+                    arguments += key + " = 0 AND "
+                elif key == "moc":
                     arguments += key + " = " + dana + " AND "
                 else:
                     arguments += key + " = '" + dana + "' AND "
@@ -384,16 +382,17 @@ def radiowoz():
 
         db.execute(query)
         radiowozy = db.fetchall()
+        
+        db.execute("SELECT * FROM radiowoz")
+        all = db.fetchall()
 
-        return render_template("radiowozy.html", radiowozy=radiowozy, rented_id=rented_id)
+        return render_template("radiowozy.html", radiowozy=radiowozy, rented_id=rented_id, all=all)
     else:
         db.execute("SELECT * FROM radiowoz")
         radiowozy = db.fetchall()
 
-        return render_template("radiowozy.html", radiowozy=radiowozy, rented_id=rented_id)
-
-
-
+        return render_template("radiowozy.html", radiowozy=radiowozy, rented_id=rented_id, all=radiowozy)
+    
 
 @app.route("/radiowozy_wynajmij", methods=["GET", "POST"])
 @login_required
@@ -421,6 +420,31 @@ def radiowoz_wynajem():
             return render_template("radiowozy_wynajem.html", radiowoz=radiowoz, rent=rent)
 
     return render_template("radiowozy_wynajem.html", radiowoz=radiowoz)
+
+@app.route("/radiowozy_release", methods=["GET"])
+@login_required
+def release_radiowoz():
+    rented_id = None
+
+    query = "SELECT radiowoz_id FROM funkcjonariusz WHERE id = %(cop_id)s"
+    db.execute(query, {'cop_id': session["user_id"]})
+    result = db.fetchone()
+    if result:
+        rented_id = result[0]
+
+    query = "UPDATE funkcjonariusz SET radiowoz_id = NULL WHERE id = %(cop_id)s"
+    db.execute(query, {'cop_id': session["user_id"]})
+
+    query = "UPDATE radiowoz SET dostepnosc = 0, rental_date = NULL WHERE id = %(rented_id)s"
+    db.execute(query, {'rented_id': rented_id})
+    cnx.commit()
+
+    rented_id = None
+
+    db.execute("SELECT * FROM radiowoz")
+    radiowozy = db.fetchall()
+
+    return render_template("radiowozy.html", radiowozy=radiowozy, rented_id=rented_id)
 
 
 @app.route("/login", methods=["GET", "POST"])

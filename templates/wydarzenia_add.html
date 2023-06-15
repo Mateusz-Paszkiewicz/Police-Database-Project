@@ -6,6 +6,48 @@
 
 {% block main %}
 
+<script>
+    $(function() {
+        var availableTags = [
+            {% for wydarzenie in all %}
+                ["{{ wydarzenie[2] }}", "{{ wydarzenie[3] }}", "{{ wydarzenie[4] }}", "{{ wydarzenie[5] }}"],
+            {% endfor %}
+        ];
+
+        var uniqueRodzaj = Array.from(new Set(availableTags.map(function(item) {
+            return item[0];
+        })));
+
+        var uniqueRegion = Array.from(new Set(availableTags.map(function(item) {
+            return item[1];
+        })));
+
+        var uniqueMiasto = Array.from(new Set(availableTags.map(function(item) {
+            return item[2];
+        })));
+
+        var uniqueUlica = Array.from(new Set(availableTags.map(function(item) {
+            return item[3];
+        })));
+
+        $("#rodzaj").autocomplete({
+            source: uniqueRodzaj
+        });
+
+        $("#region").autocomplete({
+            source: uniqueRegion
+        });
+
+        $("#miasto").autocomplete({
+            source: uniqueMiasto
+        });
+
+        $("#ulica").autocomplete({
+            source: uniqueUlica
+        });
+    });
+</script>
+
 <form action="/wydarzenia_add" method="post">
     <div class="mb-3">
         <label for="data">Data i godzina:</label>
