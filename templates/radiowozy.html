@@ -50,7 +50,10 @@
             <th style="width: 20%">Dostępność</th>
             <th style="width: 20%">Moc</th>
             <th style="width: 20%">Zdjęcie</th>
+            <th style="width: 20%">Wynajem</th>
+            <th style="width: 20%">Zwalnianie</th>
         </tr>
+
     </thead>
     <tbody>
         <!-- Loop through the database entries to display them in this table -->
@@ -63,7 +66,11 @@
                 {{ radiowoz[4] }}
             </td>
             <td>
-                {{ radiowoz[1] }}
+                {% if radiowoz[1] == 0 %}
+                <span style="color: green;">Available!</span>
+                {% else %}
+                <span style="color: #ff5555;">Hours left: {{ radiowoz[1] }}</span>
+                {% endif %}
             </td>
             <td>
                 {{ radiowoz[2] }}
@@ -76,11 +83,21 @@
                 {% endif %}
             </td>
             <td>
+                {% if radiowoz[1] == 0 and rented_id == None %}
                 <a class="btn btn-primary" style="background-color: #1b244f; color: #ffffff" href="{{ url_for('radiowoz_wynajem', id=radiowoz[0]) }}">Wynajmij</a>
+                {% else %}
+                <button class="btn btn-primary disabled" style="background-color: #ccc; color: #888;" disabled>Wynajmij</button>
+                {% endif %}
+            </td>
+            <td>
+                {% if radiowoz[0] == rented_id %}
+                <a class="btn btn-primary" style="background-color: #1b244f; color: #ffffff" href="{{ url_for('release_radiowoz') }}">Zwolnij</a>
+                {% endif %}
             </td>
         </tr>
         {% endfor %}
     </tbody>
+
 </table>
 
 {% endblock %}

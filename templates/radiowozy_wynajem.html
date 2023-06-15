@@ -8,67 +8,69 @@
 
 {% block main %}
 
-<table>
-    <tr>
-        <td style="width: 20%">
-            Numer Rejestracyjny:
-        </td>
-        <td style="width: 80%">
-            {{ radiowoz[0] }}
-        </td>
-    </tr>
-    <tr>
-        <td>
-            Model:
-        </td>
-        <td>
-            {{ radiowoz[4] }}
-        </td>
-    </tr>
-    <tr>
-        <td>
-            Moc:
-        </td>
-        <td>
-            {{ radiowoz[2] }}
-        </td>
-    </tr>
-    <tr>
-        <td>
-            Zdjęcie:
-        </td>
-        <td>
-            {% if radiowoz[5] %}
-            <img src="{{ url_for('static', filename=radiowoz[5]) }}" style="width: 200px; height: auto;" alt="car image">
-            {% else %}
-            Brak
-            {% endif %}
-        </td>
-    </tr>
-    <tr>
-        <td>
-            Czas:
-        </td>
-        <td>
-            <input autocomplete="off" class="form-control mx-auto w-auto" id="rent" name="rent" placeholder="Czas" type="number">
-        </td>
-    </tr>
-    <tr>
-        <td>
-            Wynajmij:
-        </td>
-        <td>
-            {% if rent %}
-            <!-- Outcome when rent is sent with the template -->
-            <p>Rental confirmed!</p>
-            {% else %}
-            <!-- Outcome when rent is not sent with the template -->
-            <a class="btn btn-primary" style="background-color: #1b244f; color: #ffffff" href="{{ url_for('radiowoz_wynajem', id=radiowoz[0], rent=rent) }}">Wynajmij</a>
-            {% endif %}
-        </td>
-    </tr>
+<form action="{{ url_for('radiowoz_wynajem', id=radiowoz[0]) }}" method="post">
+    <table>
 
+        <tr>
+            <td style="width: 20%">
+                Numer Rejestracyjny:
+            </td>
+            <td style="width: 80%">
+                {{ radiowoz[0] }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Model:
+            </td>
+            <td>
+                {{ radiowoz[4] }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Moc:
+            </td>
+            <td>
+                {{ radiowoz[2] }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Zdjęcie:
+            </td>
+            <td>
+                {% if radiowoz[5] %}
+                <img src="{{ url_for('static', filename=radiowoz[5]) }}" style="width: 200px; height: auto;" alt="car image">
+                {% else %}
+                Brak
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Czas:
+            </td>
+            <td>
+                <input autocomplete="off" class="form-control mx-auto w-auto" id="rent" name="rent" placeholder="Czas" type="number">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Wynajmij:
+            </td>
+            <td>
+                {% if rent %}
+                <!-- Outcome when rent is sent with the template -->
+                <p>Rental confirmed!</p>
+                {% else %}
+                <!-- Outcome when rent is not sent with the template -->
+                <button class="btn btn-primary" style="background-color: #1b244f; color: #ffffff" type="submit">Wynajmij</button>
+                {% endif %}
+            </td>
+        </tr>
 
-</table>
+    </table>
+</form>
 
 {% endblock %}

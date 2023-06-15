@@ -1,5 +1,6 @@
 ﻿import mysql.connector
 import hashlib
+import datetime
 
 from flask import Flask, redirect, render_template, request, session
 from flask_session import Session
@@ -26,6 +27,15 @@ def after_request(response):
     response.headers["Expires"] = 0
     response.headers["Pragma"] = "no-cache"
     return response
+
+
+@app.errorhandler(500)
+def server_error(error):
+    return render_template('500.html')
+
+@app.errorhandler(404)
+def server_error(error):
+    return render_template('404.html')
 
 
 @app.route("/")
@@ -315,10 +325,43 @@ def wydarzenia_add():
         return render_template("wydarzenia_add.html")
 
 
+@app.route("/radiowozy_release", methods=["GET"])
+@login_required
+def release_radiowoz():
+    rented_id = None
+
+    query = "SELECT radiowoz_id FROM funkcjonariusz WHERE id = %(cop_id)s"
+    db.execute(query, {'cop_id': session["user_id"]})
+    result = db.fetchone()
+    if result:
+        rented_id = result[0]
+
+    query = "UPDATE funkcjonariusz SET radiowoz_id = NULL WHERE id = %(cop_id)s"
+    db.execute(query, {'cop_id': session["user_id"]})
+
+    query = "UPDATE radiowoz SET dostepnosc = 0, rental_date = NULL WHERE id = %(rented_id)s"
+    db.execute(query, {'rented_id': rented_id})
+    cnx.commit()
+
+    rented_id = None
+
+    db.execute("SELECT * FROM radiowoz")
+    radiowozy = db.fetchall()
+
+    return render_template("radiowozy.html", radiowozy=radiowozy, rented_id=rented_id)
+
+
 @app.route("/radiowozy", methods=["GET", "POST"])
 @login_required
-@authorisation_3_required
 def radiowoz():
+    rented_id = -1
+
+    query = "SELECT radiowoz_id FROM funkcjonariusz WHERE id = %(cop_id)s"
+    db.execute(query, {'cop_id': session["user_id"]})
+    result = db.fetchone()
+    if result:
+        rented_id = result[0]
+
     if request.method == "POST":
         radiowoz = {}
         radiowoz["model"] = request.form.get("model")
@@ -342,12 +385,14 @@ def radiowoz():
         db.execute(query)
         radiowozy = db.fetchall()
 
-        return render_template("radiowozy.html", radiowozy=radiowozy)
+        return render_template("radiowozy.html", radiowozy=radiowozy, rented_id=rented_id)
     else:
         db.execute("SELECT * FROM radiowoz")
         radiowozy = db.fetchall()
 
-        return render_template("radiowozy.html", radiowozy=radiowozy)
+        return render_template("radiowozy.html", radiowozy=radiowozy, rented_id=rented_id)
+
+
 
 
 @app.route("/radiowozy_wynajmij", methods=["GET", "POST"])
@@ -355,21 +400,27 @@ def radiowoz():
 @authorisation_3_required
 def radiowoz_wynajem():
     id = request.args.get("id")
-    rent = request.args.get("rent")
 
-    if rent:
-        # query = "UPDATE radiowoz SET dostepnosc=%(rent)s WHERE id=%(id)s"
-        # db.execute(query, {'rent': rent, 'id': id})
-        # query = "UPDATE funkcjonariusz SET radiowoz_id=%(id)s WHERE id=%(cop_id)s"
-        # db.execute(query, {'id': id, 'cop_id': session[user_id]})
-        return render_template("radiowozy_wynajem.html", radiowoz=radiowoz, rent=rent)
-    else:
-        query = "SELECT * FROM radiowoz WHERE id=%(id)s"
-    
-        db.execute(query, {'id': id})
-        radiowoz = db.fetchall()[0]
+    query = "SELECT * FROM radiowoz WHERE id=%(id)s"
+    db.execute(query, {'id': id})
+    radiowoz = db.fetchall()[0]
 
-        return render_template("radiowozy_wynajem.html", radiowoz=radiowoz)
+    if request.method == "POST":
+        rent = request.form.get("rent")
+        if rent:
+            query = "UPDATE radiowoz SET dostepnosc=%(rent)s WHERE id=%(id)s"
+            db.execute(query, {'rent': rent, 'id': id})
+            query = "UPDATE funkcjonariusz SET radiowoz_id=%(id)s WHERE id=%(cop_id)s"
+            db.execute(query, {'id': id, 'cop_id': session["user_id"]})
+
+            current_time = datetime.datetime.now()
+
+            query = "UPDATE radiowoz SET rental_date=%(rental_date)s WHERE id=%(id)s"
+            db.execute(query, {'rental_date': current_time, 'id': id})
+            cnx.commit()
+            return render_template("radiowozy_wynajem.html", radiowoz=radiowoz, rent=rent)
+
+    return render_template("radiowozy_wynajem.html", radiowoz=radiowoz)
 
 
 @app.route("/login", methods=["GET", "POST"])
