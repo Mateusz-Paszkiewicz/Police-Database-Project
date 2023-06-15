@@ -70,10 +70,13 @@
             </td>
             <td>
                 {% if radiowoz[5] %}
-                    <img src="{{ url_for('static', filename='resources/' + radiowoz[5]) }}" style="width: 200px; height: auto;" alt="car image">
+                <img src="{{ url_for('static', filename=radiowoz[5]) }}" style="width: 200px; height: auto;" alt="car image">
                 {% else %}
-                    Brak
+                Brak
                 {% endif %}
+            </td>
+            <td>
+                <a class="btn btn-primary" style="background-color: #1b244f; color: #ffffff" href="{{ url_for('radiowoz_wynajem', id=radiowoz[0]) }}">Wynajmij</a>
             </td>
         </tr>
         {% endfor %}

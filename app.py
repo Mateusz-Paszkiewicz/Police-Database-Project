@@ -15,7 +15,7 @@ Session(app)
 
 cnx = mysql.connector.connect(user='funkcjonariusz', password='password123',
                               host='127.0.0.1',
-                              database='bazy_data')
+                              database='policedb')
 db = cnx.cursor()
 
 
@@ -349,6 +349,27 @@ def radiowoz():
 
         return render_template("radiowozy.html", radiowozy=radiowozy)
 
+
+@app.route("/radiowozy_wynajmij", methods=["GET", "POST"])
+@login_required
+@authorisation_3_required
+def radiowoz_wynajem():
+    id = request.args.get("id")
+    rent = request.args.get("rent")
+
+    if rent:
+        # query = "UPDATE radiowoz SET dostepnosc=%(rent)s WHERE id=%(id)s"
+        # db.execute(query, {'rent': rent, 'id': id})
+        # query = "UPDATE funkcjonariusz SET radiowoz_id=%(id)s WHERE id=%(cop_id)s"
+        # db.execute(query, {'id': id, 'cop_id': session[user_id]})
+        return render_template("radiowozy_wynajem.html", radiowoz=radiowoz, rent=rent)
+    else:
+        query = "SELECT * FROM radiowoz WHERE id=%(id)s"
+    
+        db.execute(query, {'id': id})
+        radiowoz = db.fetchall()[0]
+
+        return render_template("radiowozy_wynajem.html", radiowoz=radiowoz)
 
 
 @app.route("/login", methods=["GET", "POST"])
