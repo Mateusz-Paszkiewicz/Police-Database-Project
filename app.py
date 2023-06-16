@@ -380,6 +380,7 @@ def radiowoz():
         if arguments:
             query += " WHERE " + arguments
 
+        query += " ORDER BY dostepnosc"
         db.execute(query)
         radiowozy = db.fetchall()
         
@@ -388,7 +389,7 @@ def radiowoz():
 
         return render_template("radiowozy.html", radiowozy=radiowozy, rented_id=rented_id, all=all)
     else:
-        db.execute("SELECT * FROM radiowoz")
+        db.execute("SELECT * FROM radiowoz ORDER BY dostepnosc")
         radiowozy = db.fetchall()
 
         return render_template("radiowozy.html", radiowozy=radiowozy, rented_id=rented_id, all=radiowozy)

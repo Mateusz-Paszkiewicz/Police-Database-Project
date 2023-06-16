@@ -31,19 +31,19 @@
         })));
 
         $("#rodzaj").autocomplete({
-            source: uniqueRodzaj
+            source: uniqueRodzaj.slice(0, 7)
         });
 
         $("#region").autocomplete({
-            source: uniqueRegion
+            source: uniqueRegion.slice(0, 7)
         });
 
         $("#miasto").autocomplete({
-            source: uniqueMiasto
+            source: uniqueMiasto.slice(0, 7)
         });
 
         $("#ulica").autocomplete({
-            source: uniqueUlica
+            source: uniqueUlica.slice(0, 7)
         });
     });
 </script>

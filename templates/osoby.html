@@ -27,15 +27,15 @@
         })));
     
         $("#imie").autocomplete({
-            source: uniqueImie
+            source: uniqueImie.slice(0, 7)
         });
     
         $("#nazwisko").autocomplete({
-            source: uniqueNazwisko
+            source: uniqueNazwisko.slice(0, 7)
         });
     
         $("#przezwisko").autocomplete({
-            source: uniquePrzezwisko
+            source: uniquePrzezwisko.slice(0, 7)
         });
     });
 </script>

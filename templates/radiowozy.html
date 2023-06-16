@@ -23,11 +23,11 @@
         })));
 
         $("#model").autocomplete({
-            source: uniqueModels
+            source: uniqueModels.slice(0, 7)
         });
 
         $("#kolor").autocomplete({
-            source: uniqueKolor
+            source: uniqueKolor.slice(0, 7)
         });
     });
 </script>
