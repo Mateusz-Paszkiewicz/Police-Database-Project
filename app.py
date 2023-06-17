@@ -116,20 +116,17 @@ def osoby_add():
         osoba["inne"] = request.form.get("inne")
 
         columns = "("
-        values = " VALUES("
+        values = []
+        values_v = {}
         for key, dana in osoba.items():
             if dana:
-                if key == "wiek" or key == "wzrost":
-                    columns = columns + key + ", "
-                    values = values + dana + ", "
-                else:
-                    columns = columns + key + ", "
-                    values = values + "'" + dana + "', "
+                columns = columns + key + ", "
+                values.append("%(" + key + ")s")
+                values_v[key] = dana
         columns = columns.rstrip(", ") + ")"
-        values = values.rstrip(", ") + ");"
 
-        query = "INSERT INTO osoba" + columns + values
-        db.execute(query)
+        query = "INSERT INTO osoba" + columns + " VALUES(" + ", ".join(values) + ")"
+        db.execute(query, values_v)
         cnx.commit()
 
         return render_template("osoby_add.html", success=1)
@@ -152,18 +149,16 @@ def wydarzenia():
         miejsce["numer"] = request.form.get("numer")
         miejsce["mieszkanie"] = request.form.get("mieszkanie")
 
-        arguments = ""
+        arguments = []
+        values = {}
         for key, dana in miejsce.items():
             if dana:
-                if key == "numer" or key == "mieszkanie":
-                    arguments = arguments + key + "=" + dana + " AND "
-                else:
-                    arguments = arguments + key + "='" + dana + "' AND "
-        arguments = arguments.rstrip(" AND ")
+                arguments.append(key + "=%(" + key + ")s")
+                values[key] = dana
 
         if len(arguments) >= 1:
-            query = "SELECT * FROM miejsce WHERE " + arguments
-            db.execute(query)
+            query = "SELECT * FROM miejsce WHERE " + " AND ".join(arguments)
+            db.execute(query, values)
             miejsce = db.fetchall()
             if len(miejsce) >= 1:
                 miejsce_id = miejsce[0][0]
@@ -175,22 +170,26 @@ def wydarzenia():
             miejsce_id = None
             region = None
 
-        arguments = ""
+        arguments = []
+        values = {}
         if data:
-            arguments = arguments + "data_wyd='" + data + "' AND "
+            arguments.append("data_wyd=%(data_wyd)s")
+            values["data_wyd"] = data
         if rodzaj:
-            arguments = arguments + "rodzaj='" + rodzaj + "' AND "
+            arguments.append("rodzaj=%(rodzaj)s")
+            values["rodzaj"] = rodzaj
         if miejsce_id:
-            arguments = arguments + "miejsce_id=" + str(miejsce_id) + " AND "
-        arguments = arguments.rstrip(" AND ")
+            arguments.append("miejsce_id=%(miejsce_id)s")
+            values["miejsce_id"] = miejsce_id
 
         zdarzenia = []
         query = "SELECT * FROM baza_wydarzen"
         if len(arguments) >= 1:
-            query += " WHERE " + arguments
+            query += " WHERE " + " AND ".join(arguments)
         query += " ORDER BY data_wyd"
-        db.execute(query)
+        db.execute(query, values)
         wydarzenia = db.fetchall()
+
         for wydarzenie in wydarzenia:
             db.execute("SELECT region FROM miejsce WHERE id = " + str(wydarzenie[3]))
             region = db.fetchall()[0][0]
@@ -281,56 +280,59 @@ def wydarzenia_add():
         wydarzenie["numer"] = request.form.get("numer")
         wydarzenie["mieszkanie"] = request.form.get("mieszkanie")
 
-        arguments = ""
+        arguments = []
+        values = {}
         for key, dana in wydarzenie.items():
             if dana:
-                if key == "numer" or key == "mieszkanie":
-                    arguments = arguments + key + "=" + dana + " AND "
-                else:
-                    arguments = arguments + key + "='" + dana + "' AND "
-        arguments = arguments.rstrip(" AND ")
+                arguments.append(key + "=%(" + key + ")s")
+                values[key] = dana
 
         if len(arguments) >= 1:
-            query = "SELECT * FROM miejsce WHERE " + arguments
-            db.execute(query)
+            query = "SELECT * FROM miejsce WHERE " + " AND ".join(arguments)
+            db.execute(query, values)
             miejsce = db.fetchall()
             if len(miejsce) >= 1:
                 miejsce_id = miejsce[0][0]
             else:
                 columns = "("
-                values = " VALUES("
+                values = []
+                values_q = []
+                values_v = {}
                 for key, dana in wydarzenie.items():
                     if dana:
                         columns = columns + key + ", "
-                        if key == "numer" or key == "mieszkanie":
-                            values = values + dana + ", "
-                        else:
-                            values = values + "'" + dana + "', "
+                        values.append("%(" + key + ")s")
+                        values_q.append(key + "=%(" + key + ")s")
+                        values_v[key] = dana
                 columns = columns.rstrip(", ") + ") "
-                values = values.rstrip(", ") + ")"
 
-                query = "INSERT INTO miejsce" + columns + values
-                db.execute(query)
+                query = "INSERT INTO miejsce" + columns + "VALUES(" + ", ".join(values) + ")"
+                db.execute(query, values_v)
 
-                query = "SELECT * FROM miejsce WHERE " + arguments
-                db.execute(query)
+                query = "SELECT * FROM miejsce WHERE " + " AND ".join(values_q)
+                db.execute(query, values_v)
                 miejsce = db.fetchall()
                 miejsce_id = miejsce[0][0]
         else:
             miejsce_id = None
 
         columns = "("
-        values = " VALUES("
+        values = []
+        values_v = {}
         if data:
             columns = columns + "data_wyd, "
-            values = values + "'" + data + "', "
+            values.append("%(data_wyd)s")
+            values_v["data_wyd"] = data
         if rodzaj:
             columns = columns + "rodzaj, "
-            values = values + "'" + rodzaj + "', "
+            values.append("%(rodzaj)s")
+            values_v["rodzaj"] = rodzaj
+
         columns = columns + "miejsce_id, funkcjonariusz_id)"
-        values = values + str(miejsce_id) + ", " + str(session["user_id"]) + ")"
-        fin = "INSERT INTO baza_wydarzen" + columns + values
-        db.execute(fin)
+        values_v["miejsce_id"] = str(miejsce_id)
+        values_v["funkcjonariusz_id"] = str(session["user_id"])
+        fin = "INSERT INTO baza_wydarzen" + columns + " VALUES(" + ", ".join(values) + ", %(miejsce_id)s, %(funkcjonariusz_id)s)"
+        db.execute(fin, values_v)
         cnx.commit()
 
         return render_template("wydarzenia_add.html", success=1)
@@ -366,22 +368,20 @@ def radiowoz():
         radiowoz["kolor"] = request.form.get("kolor")
 
         arguments = ""
+        arguments = []
+        values = {}
         for key, dana in radiowoz.items():
             if dana:
+                arguments.append(key + "=%(" + key + ")s")
                 if key == "dostepnosc":
-                    arguments += key + " = 0 AND "
-                elif key == "moc":
-                    arguments += key + " = " + dana + " AND "
-                else:
-                    arguments += key + " = '" + dana + "' AND "
-        arguments = arguments.rstrip(" AND ")
+                    values[key] = 0
 
         query = "SELECT * FROM radiowoz"
         if arguments:
-            query += " WHERE " + arguments
+            query += " WHERE " + " AND ".join(arguments)
 
         query += " ORDER BY dostepnosc"
-        db.execute(query)
+        db.execute(query, values)
         radiowozy = db.fetchall()
         
         db.execute("SELECT * FROM radiowoz")
