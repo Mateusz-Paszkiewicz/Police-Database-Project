@@ -1,6 +1,7 @@
 ﻿import mysql.connector
 import hashlib
 import datetime
+from datetime import datetime 
 
 from flask import Flask, redirect, render_template, request, session
 from flask_session import Session
@@ -16,7 +17,7 @@ Session(app)
 
 cnx = mysql.connector.connect(user='funkcjonariusz', password='password123',
                               host='127.0.0.1',
-                              database='bazy_data')
+                              database='policedb')
 db = cnx.cursor()
 
 
@@ -253,7 +254,8 @@ def wydarzenie_info():
     
         db.execute(query, {'id': powiazana_osoba[0]})
         osoba = db.fetchall()[0]
-        imie = osoba[3] + " '" + osoba[6] + "' " + osoba[4]
+        imie_parts = [part for part in [osoba[3], osoba[6], osoba[4]] if part is not None]
+        imie = " ".join(imie_parts)
         
         if powiazana_osoba[2] == "swiadek":
             swiadkowie.append([imie, osoba[0]])
@@ -352,6 +354,33 @@ def wydarzenia_add():
 @app.route("/radiowozy", methods=["GET", "POST"])
 @login_required
 def radiowoz():
+    # updating elasped time for each radiowoz
+    query = "SELECT id, rental_date, dostepnosc FROM radiowoz"
+    db.execute(query)
+    all_cars = db.fetchall()
+
+    for car in all_cars:
+        radiowoz_id = car[0]
+        rental_date = car[1]
+        current_dostepnosc = car[2]
+        
+        if current_dostepnosc != 0:
+            rental_datetime = rental_date
+            current_datetime = datetime.now()
+            elapsed_time = current_datetime - rental_datetime
+            dostepnosc = max(int( current_dostepnosc - (elapsed_time.total_seconds()/3600)+1) , 0)
+
+            if dostepnosc == 0:
+                query = "UPDATE radiowoz SET rental_date = NULL WHERE id = %(radiowoz_id)s"
+                db.execute(query, {'radiowoz_id': radiowoz_id})
+                query = "UPDATE funkcjonariusz SET radiowoz_id = NULL WHERE radiowoz_id = %(radiowoz_id)s"
+                db.execute(query, {'radiowoz_id': radiowoz_id})
+
+            update_query = "UPDATE radiowoz SET dostepnosc = %(dostepnosc)s WHERE id = %(radiowoz_id)s"
+            db.execute(update_query, {'dostepnosc': dostepnosc, 'radiowoz_id': radiowoz_id})
+            cnx.commit()
+
+    # actual radiowozy endpoint
     rented_id = -1
 
     query = "SELECT radiowoz_id FROM funkcjonariusz WHERE id = %(cop_id)s"
@@ -413,7 +442,7 @@ def radiowoz_wynajem():
             query = "UPDATE funkcjonariusz SET radiowoz_id=%(id)s WHERE id=%(cop_id)s"
             db.execute(query, {'id': id, 'cop_id': session["user_id"]})
 
-            current_time = datetime.datetime.now()
+            current_time = datetime.now()
 
             query = "UPDATE radiowoz SET rental_date=%(rental_date)s WHERE id=%(id)s"
             db.execute(query, {'rental_date': current_time, 'id': id})
