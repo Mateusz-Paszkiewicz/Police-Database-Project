@@ -12,23 +12,27 @@ Aby uruchomić aplikację, potrzebujesz następujących elementów:
 
 <h1>Konfiguracja</h1>
 
+Instalacja sktptów venv:
+
+    py -3 -m venv .venv
+
 Przed uruchomieniem aplikacji, upewnij się, że skonfigurowałeś szczegóły połączenia z bazą danych. Zmodyfikuj następujące linie w kodzie:
 
-python
-
-cnx = mysql.connector.connect(user='funkcjonariusz', password='password123',
+    cnx = mysql.connector.connect(user='funkcjonariusz', password='password123',
                               host='127.0.0.1',
                               database='policedb')
 
 Zaktualizuj wartości user, password, host i database zgodnie z konfiguracją Twojego serwera MySQL.
 <h1>Użycie</h1>
 
-Aby uruchomić aplikację, uruchom skrypt Pythona w terminalu:
+Aby uruchomić aplikację, uruchom skrypt Pythona oraz aktywuj skrypt venv flaska w terminalu:
 
-python app.py
+    .venv\Scripts\activate
+
+    flask --app app.py run
 
 Po uruchomieniu aplikacji, możesz uzyskać do niej dostęp w przeglądarce internetowej pod adresem http://localhost:5000/.
-Trasy (Routes)
+<h1>Trasy (Routes)</h1>
 
 Aplikacja udostępnia następujące trasy (routes):
 
