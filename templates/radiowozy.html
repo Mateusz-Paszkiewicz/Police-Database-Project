@@ -105,7 +105,7 @@
             </td>
             <td>
                 {% if radiowoz[5] %}
-                <img src="{{ url_for('static', filename=radiowoz[5]) }}" style="width: 200px; height: auto;" alt="car image">
+                <img src="{{ url_for('static', filename='resources/' + radiowoz[5]) }}" style="width: 200px; height: auto;" alt="car image">
                 {% else %}
                 Brak
                 {% endif %}

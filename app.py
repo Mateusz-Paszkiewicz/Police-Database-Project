@@ -17,7 +17,7 @@ Session(app)
 
 cnx = mysql.connector.connect(user='funkcjonariusz', password='password123',
                               host='127.0.0.1',
-                              database='policedb')
+                              database='bazy_data')
 db = cnx.cursor()
 
 
@@ -368,7 +368,7 @@ def radiowoz():
             rental_datetime = rental_date
             current_datetime = datetime.now()
             elapsed_time = current_datetime - rental_datetime
-            dostepnosc = max(int( current_dostepnosc - (elapsed_time.total_seconds()/3600)+1) , 0)
+            dostepnosc = max(int( current_dostepnosc - (elapsed_time.total_seconds()/3600)+1), 0)
 
             if dostepnosc == 0:
                 query = "UPDATE radiowoz SET rental_date = NULL WHERE id = %(radiowoz_id)s"
@@ -402,6 +402,7 @@ def radiowoz():
         for key, dana in radiowoz.items():
             if dana:
                 arguments.append(key + "=%(" + key + ")s")
+                values[key] = dana
                 if key == "dostepnosc":
                     values[key] = 0
 
